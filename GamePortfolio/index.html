@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Irvan Wang - Game Portfolio">
+    <title>Game Portfolio | Irvan Wang</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Portfolio specific styles */
+        .portfolio-hero {
+            min-height: 60vh;
+            display: flex;
+            align-items: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding-top: 80px;
+        }
+
+        .portfolio-hero-content {
+            text-align: center;
+        }
+
+        .portfolio-hero h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+
+        .portfolio-hero p {
+            font-size: 1.3rem;
+            opacity: 0.9;
+        }
+
+        .filter-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 10px 25px;
+            border: 2px solid var(--primary-color);
+            background: transparent;
+            color: var(--primary-color);
+            border-radius: 50px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+        }
+
+        .game-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .game-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        }
+
+        .game-image {
+            position: relative;
+            height: 250px;
+            overflow: hidden;
+        }
+
+        .game-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .game-card:hover .game-image img {
+            transform: scale(1.1);
+        }
+
+        .game-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: var(--secondary-color);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .game-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(74, 144, 226, 0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .game-card:hover .game-overlay {
+            opacity: 1;
+        }
+
+        .game-info {
+            padding: 25px;
+        }
+
+        .game-info h3 {
+            font-size: 1.6rem;
+            margin-bottom: 10px;
+            color: var(--dark-color);
+        }
+
+        .game-meta {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            color: var(--gray-color);
+        }
+
+        .game-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .game-description {
+            color: var(--gray-color);
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .game-tech {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .game-tech span {
+            padding: 5px 12px;
+            background: var(--light-color);
+            color: var(--primary-color);
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .game-links {
+            display: flex;
+            gap: 10px;
+        }
+
+        .game-link {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .game-link.primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .game-link.primary:hover {
+            background: #3a7bc8;
+        }
+
+        .game-link.secondary {
+            background: var(--light-color);
+            color: var(--primary-color);
+        }
+
+        .game-link.secondary:hover {
+            background: var(--dark-color);
+            color: white;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 2000;
+            overflow-y: auto;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: white;
+            max-width: 900px;
+            width: 100%;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5rem;
+            z-index: 10;
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            background: var(--secondary-color);
+            color: white;
+            transform: rotate(90deg);
+        }
+
+        .modal-image {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+        }
+
+        .modal-body {
+            padding: 40px;
+        }
+
+        .modal-body h2 {
+            font-size: 2.2rem;
+            margin-bottom: 20px;
+            color: var(--dark-color);
+        }
+
+        .modal-screenshots {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .modal-screenshots img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .modal-screenshots img:hover {
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+            .portfolio-hero h1 {
+                font-size: 2rem;
+            }
+
+            .portfolio-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-body {
+                padding: 20px;
+            }
+
+            .modal-body h2 {
+                font-size: 1.6rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">
+                <a href="../index.html">Irvan Wang</a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="../index.html#about">About</a></li>
+                <li><a href="../index.html#skills">Skills</a></li>
+                <li><a href="index.html" class="active">Portfolio</a></li>
+                <li><a href="../index.html#contact">Contact</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero区域 -->
+    <section class="portfolio-hero">
+        <div class="container">
+            <div class="portfolio-hero-content">
+                <h1>Game Portfolio</h1>
+                <p>Showcasing my game development projects and interactive experiences</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 作品集区域 -->
+    <section id="portfolio" class="about">
+        <div class="container">
+            <h2 class="section-title">My Games</h2>
+            
+            <!-- 筛选按钮 -->
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="unity">Unity</button>
+                <button class="filter-btn" data-filter="unreal">Unreal Engine</button>
+                <button class="filter-btn" data-filter="web">Web Games</button>
+                <button class="filter-btn" data-filter="mobile">Mobile</button>
+            </div>
+
+            <!-- 游戏网格 -->
+            <div class="portfolio-grid">
+                <!-- Game Card 1 -->
+                <div class="game-card" data-category="unity">
+                    <div class="game-image">
+                        <img src="https://via.placeholder.com/400x300/667eea/ffffff?text=Adventure+Quest" alt="Adventure Quest">
+                        <span class="game-badge">Unity</span>
+                        <div class="game-overlay">
+                            <a href="#" class="btn-icon"><i class="fas fa-eye"></i></a>
+                            <a href="#" class="btn-icon"><i class="fab fa-github"></i></a>
+                        </div>
+                    </div>
+                    <div class="game-info">
+                        <h3>Adventure Quest</h3>
+                        <div class="game-meta">
+                            <span><i class="fas fa-calendar"></i> 2024</span>
+                            <span><i class="fas fa-gamepad"></i> Action RPG</span>
+                        </div>
+                        <p class="game-description">An epic 3D adventure game featuring dynamic combat system, quest mechanics, and immersive storytelling.</p>
+                        <div class="game-tech">
+                            <span>Unity</span>
+                            <span>C#</span>
+                            <span>Blender</span>
+                        </div>
+                        <div class="game-links">
+                            <a href="#" class="game-link primary"><i class="fas fa-play"></i> Play Demo</a>
+                            <a href="#" class="game-link secondary"><i class="fab fa-github"></i> Code</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Game Card 2 -->
+                <div class="game-card" data-category="web">
+                    <div class="game-image">
+                        <img src="https://via.placeholder.com/400x300/e94b3c/ffffff?text=Puzzle+Master" alt="Puzzle Master">
+                        <span class="game-badge">Web</span>
+                        <div class="game-overlay">
+                            <a href="#" class="btn-icon"><i class="fas fa-eye"></i></a>
+                            <a href="#" class="btn-icon"><i class="fab fa-github"></i></a>
+                        </div>
+                    </div>
+                    <div class="game-info">
+                        <h3>Puzzle Master</h3>
+                        <div class="game-meta">
+                            <span><i class="fas fa-calendar"></i> 2024</span>
+                            <span><i class="fas fa-gamepad"></i> Puzzle</span>
+                        </div>
+                        <p class="game-description">A challenging browser-based puzzle game with 50+ levels, smooth animations, and responsive controls.</p>
+                        <div class="game-tech">
+                            <span>JavaScript</span>
+                            <span>Canvas API</span>
+                            <span>CSS3</span>
+                        </div>
+                        <div class="game-links">
+                            <a href="#" class="game-link primary"><i class="fas fa-play"></i> Play Now</a>
+                            <a href="#" class="game-link secondary"><i class="fab fa-github"></i> Code</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Game Card 3 -->
+                <div class="game-card" data-category="unreal">
+                    <div class="game-image">
+                        <img src="https://via.placeholder.com/400x300/6dc46d/ffffff?text=Cyber+Racer" alt="Cyber Racer">
+                        <span class="game-badge">Unreal</span>
+                        <div class="game-overlay">
+                            <a href="#" class="btn-icon"><i class="fas fa-eye"></i></a>
+                            <a href="#" class="btn-icon"><i class="fab fa-github"></i></a>
+                        </div>
+                    </div>
+                    <div class="game-info">
+                        <h3>Cyber Racer</h3>
+                        <div class="game-meta">
+                            <span><i class="fas fa-calendar"></i> 2023</span>
+                            <span><i class="fas fa-gamepad"></i> Racing</span>
+                        </div>
+                        <p class="game-description">High-speed futuristic racing game with stunning visuals, multiplayer support, and customizable vehicles.</p>
+                        <div class="game-tech">
+                            <span>Unreal Engine</span>
+                            <span>C++</span>
+                            <span>Blueprint</span>
+                        </div>
+                        <div class="game-links">
+                            <a href="#" class="game-link primary"><i class="fas fa-play"></i> Watch Trailer</a>
+                            <a href="#" class="game-link secondary"><i class="fas fa-info"></i> Details</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Game Card 4 -->
+                <div class="game-card" data-category="mobile">
+                    <div class="game-image">
+                        <img src="https://via.placeholder.com/400x300/f5a623/ffffff?text=Space+Defender" alt="Space Defender">
+                        <span class="game-badge">Mobile</span>
+                        <div class="game-overlay">
+                            <a href="#" class="btn-icon"><i class="fas fa-eye"></i></a>
+                            <a href="#" class="btn-icon"><i class="fab fa-github"></i></a>
+                        </div>
+                    </div>
+                    <div class="game-info">
+                        <h3>Space Defender</h3>
+                        <div class="game-meta">
+                            <span><i class="fas fa-calendar"></i> 2023</span>
+                            <span><i class="fas fa-gamepad"></i> Shooter</span>
+                        </div>
+                        <p class="game-description">Addictive mobile space shooter with upgrade system, boss battles, and endless mode.</p>
+                        <div class="game-tech">
+                            <span>Unity</span>
+                            <span>C#</span>
+                            <span>Android/iOS</span>
+                        </div>
+                        <div class="game-links">
+                            <a href="#" class="game-link primary"><i class="fab fa-google-play"></i> Download</a>
+                            <a href="#" class="game-link secondary"><i class="fab fa-app-store"></i> iOS</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Game Card 5 -->
+                <div class="game-card" data-category="unity">
+                    <div class="game-image">
+                        <img src="https://via.placeholder.com/400x300/9b59b6/ffffff?text=Dungeon+Crawler" alt="Dungeon Crawler">
+                        <span class="game-badge">Unity</span>
+                        <div class="game-overlay">
+                            <a href="#" class="btn-icon"><i class="fas fa-eye"></i></a>
+                            <a href="#" class="btn-icon"><i class="fab fa-github"></i></a>
+                        </div>
+                    </div>
+                    <div class="game-info">
+                        <h3>Dungeon Crawler</h3>
+                        <div class="game-meta">
+                            <span><i class="fas fa-calendar"></i> 2023</span>
+                            <span><i class="fas fa-gamepad"></i> Roguelike</span>
+                        </div>
+                        <p class="game-description">Procedurally generated dungeon crawler with permadeath, loot system, and challenging boss fights.</p>
+                        <div class="game-tech">
+                            <span>Unity</span>
+                            <span>C#</span>
+                            <span>Procedural Gen</span>
+                        </div>
+                        <div class="game-links">
+                            <a href="#" class="game-link primary"><i class="fas fa-play"></i> Play Demo</a>
+                            <a href="#" class="game-link secondary"><i class="fab fa-github"></i> Code</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Game Card 6 -->
+                <div class="game-card" data-category="web">
+                    <div class="game-image">
+                        <img src="https://via.placeholder.com/400x300/3498db/ffffff?text=Tower+Defense" alt="Tower Defense">
+                        <span class="game-badge">Web</span>
+                        <div class="game-overlay">
+                            <a href="#" class="btn-icon"><i class="fas fa-eye"></i></a>
+                            <a href="#" class="btn-icon"><i class="fab fa-github"></i></a>
+                        </div>
+                    </div>
+                    <div class="game-info">
+                        <h3>Tower Defense Pro</h3>
+                        <div class="game-meta">
+                            <span><i class="fas fa-calendar"></i> 2022</span>
+                            <span><i class="fas fa-gamepad"></i> Strategy</span>
+                        </div>
+                        <p class="game-description">Strategic tower defense game with multiple tower types, enemy waves, and upgrade paths.</p>
+                        <div class="game-tech">
+                            <span>Phaser.js</span>
+                            <span>JavaScript</span>
+                            <span>WebGL</span>
+                        </div>
+                        <div class="game-links">
+                            <a href="#" class="game-link primary"><i class="fas fa-play"></i> Play Now</a>
+                            <a href="#" class="game-link secondary"><i class="fab fa-github"></i> Code</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal -->
+    <div id="gameModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close">&times;</button>
+            <img class="modal-image" src="https://via.placeholder.com/900x400" alt="Game">
+            <div class="modal-body">
+                <h2 id="modalTitle">Game Title</h2>
+                <div class="game-meta">
+                    <span><i class="fas fa-calendar"></i> <span id="modalYear">2024</span></span>
+                    <span><i class="fas fa-gamepad"></i> <span id="modalGenre">Genre</span></span>
+                    <span><i class="fas fa-code"></i> <span id="modalEngine">Engine</span></span>
+                </div>
+                <p id="modalDescription" class="game-description"></p>
+                <div class="game-tech" id="modalTech"></div>
+                <h3 style="margin-top: 30px; margin-bottom: 15px;">Screenshots</h3>
+                <div class="modal-screenshots">
+                    <img src="https://via.placeholder.com/200x150/667eea/ffffff?text=Screenshot+1" alt="Screenshot">
+                    <img src="https://via.placeholder.com/200x150/e94b3c/ffffff?text=Screenshot+2" alt="Screenshot">
+                    <img src="https://via.placeholder.com/200x150/6dc46d/ffffff?text=Screenshot+3" alt="Screenshot">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Irvan Wang. All rights reserved.</p>
+            <div class="footer-social">
+                <a href="https://github.com/irvanwang22" target="_blank"><i class="fab fa-github"></i></a>
+                <a href="https://linkedin.com" target="_blank"><i class="fab fa-linkedin"></i></a>
+                <a href="mailto:contact@irvan22.com"><i class="fas fa-envelope"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="index.js"></script>
+</body>
+</html>
