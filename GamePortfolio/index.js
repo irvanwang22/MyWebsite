@@ -1,4 +1,4 @@
-// 移动端导航菜单切换
+// Mobile navigation menu toggle
 const hamburger = document.querySelector('.hamburger');
 const navLinks = document.querySelector('.nav-links');
 
@@ -9,7 +9,7 @@ if (hamburger) {
     });
 }
 
-// 点击导航链接后关闭菜单
+// Close menu when clicking navigation links
 document.querySelectorAll('.nav-links a').forEach(link => {
     link.addEventListener('click', () => {
         navLinks.classList.remove('active');
@@ -19,7 +19,7 @@ document.querySelectorAll('.nav-links a').forEach(link => {
     });
 });
 
-// 滚动时导航栏阴影效果
+// Navbar shadow effect on scroll
 const navbar = document.querySelector('.navbar');
 
 window.addEventListener('scroll', () => {
@@ -30,47 +30,17 @@ window.addEventListener('scroll', () => {
     }
 });
 
-// 筛选功能
-const filterButtons = document.querySelectorAll('.filter-btn');
+// Get all game cards
 const gameCards = document.querySelectorAll('.game-card');
 
-filterButtons.forEach(button => {
-    button.addEventListener('click', () => {
-        // 移除所有active类
-        filterButtons.forEach(btn => btn.classList.remove('active'));
-        // 添加active类到当前按钮
-        button.classList.add('active');
-        
-        const filterValue = button.getAttribute('data-filter');
-        
-        gameCards.forEach(card => {
-            const category = card.getAttribute('data-category');
-            
-            if (filterValue === 'all' || category === filterValue) {
-                card.style.display = 'block';
-                setTimeout(() => {
-                    card.style.opacity = '1';
-                    card.style.transform = 'translateY(0)';
-                }, 10);
-            } else {
-                card.style.opacity = '0';
-                card.style.transform = 'translateY(20px)';
-                setTimeout(() => {
-                    card.style.display = 'none';
-                }, 300);
-            }
-        });
-    });
-});
-
-// Modal 功能
+// Modal functionality
 const modal = document.getElementById('gameModal');
 const modalClose = document.querySelector('.modal-close');
 
-// 点击游戏卡片打开modal
+// Open modal when clicking game cards
 gameCards.forEach(card => {
     card.addEventListener('click', (e) => {
-        // 防止点击链接时打开modal
+        // Prevent modal from opening when clicking links
         if (e.target.closest('a')) {
             return;
         }
@@ -83,15 +53,15 @@ gameCards.forEach(card => {
         const badge = card.querySelector('.game-badge').textContent;
         const image = card.querySelector('.game-image img').src;
         
-        // 填充modal内容
+        // Fill modal content
         document.getElementById('modalTitle').textContent = title;
-        document.getElementById('modalDescription').textContent = description + ' ' + description; // 扩展描述
+        document.getElementById('modalDescription').textContent = description + ' ' + description;
         document.getElementById('modalYear').textContent = year;
         document.getElementById('modalGenre').textContent = genre;
         document.getElementById('modalEngine').textContent = badge;
         document.querySelector('.modal-image').src = image;
         
-        // 填充技术标签
+        // Fill technology tags
         const techContainer = document.getElementById('modalTech');
         techContainer.innerHTML = '';
         card.querySelectorAll('.game-tech span').forEach(tech => {
@@ -105,7 +75,7 @@ gameCards.forEach(card => {
     });
 });
 
-// 关闭modal
+// Close modal
 modalClose.addEventListener('click', closeModal);
 
 modal.addEventListener('click', (e) => {
@@ -119,14 +89,14 @@ function closeModal() {
     document.body.style.overflow = 'auto';
 }
 
-// ESC键关闭modal
+// Close modal with ESC key
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && modal.classList.contains('active')) {
         closeModal();
     }
 });
 
-// 页面加载动画
+// Page load animation
 window.addEventListener('load', () => {
     gameCards.forEach((card, index) => {
         card.style.opacity = '0';
@@ -140,7 +110,7 @@ window.addEventListener('load', () => {
     });
 });
 
-// 返回顶部按钮
+// Scroll to top button
 const scrollTopBtn = document.createElement('button');
 scrollTopBtn.innerHTML = '<i class="fas fa-arrow-up"></i>';
 scrollTopBtn.className = 'scroll-top-btn';
@@ -189,7 +159,7 @@ scrollTopBtn.addEventListener('mouseleave', () => {
     scrollTopBtn.style.transform = 'translateY(0)';
 });
 
-// 悬停效果增强
+// Enhanced hover effects for game cards
 gameCards.forEach(card => {
     const overlay = card.querySelector('.game-overlay');
     const btnIcons = overlay.querySelectorAll('.btn-icon');
