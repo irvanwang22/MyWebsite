@@ -7,320 +7,7 @@
     <title>Game Portfolio | Irvan Wang</title>
     <link rel="stylesheet" href="../style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        /* Portfolio specific styles */
-        .portfolio-hero {
-            min-height: 60vh;
-            display: flex;
-            align-items: center;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding-top: 80px;
-        }
-
-        .portfolio-hero-content {
-            text-align: center;
-        }
-
-        .portfolio-hero h1 {
-            font-size: 3rem;
-            margin-bottom: 20px;
-        }
-
-        .portfolio-hero p {
-            font-size: 1.3rem;
-            opacity: 0.9;
-        }
-
-        .filter-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 40px;
-            flex-wrap: wrap;
-        }
-
-        .filter-btn {
-            padding: 10px 25px;
-            border: 2px solid var(--primary-color);
-            background: transparent;
-            color: var(--primary-color);
-            border-radius: 50px;
-            cursor: pointer;
-            transition: var(--transition);
-            font-weight: 600;
-        }
-
-        .filter-btn:hover,
-        .filter-btn.active {
-            background: var(--primary-color);
-            color: white;
-        }
-
-        .portfolio-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 30px;
-        }
-
-        .game-card {
-            background: white;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-            transition: var(--transition);
-            cursor: pointer;
-        }
-
-        .game-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
-        }
-
-        .game-image {
-            position: relative;
-            height: 250px;
-            overflow: hidden;
-        }
-
-        .game-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: var(--transition);
-        }
-
-        .game-card:hover .game-image img {
-            transform: scale(1.1);
-        }
-
-        .game-badge {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: var(--secondary-color);
-            color: white;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: 600;
-        }
-
-        .game-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(74, 144, 226, 0.95);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
-            opacity: 0;
-            transition: var(--transition);
-        }
-
-        .game-card:hover .game-overlay {
-            opacity: 1;
-        }
-
-        .game-info {
-            padding: 25px;
-        }
-
-        .game-info h3 {
-            font-size: 1.6rem;
-            margin-bottom: 10px;
-            color: var(--dark-color);
-        }
-
-        .game-meta {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 15px;
-            font-size: 0.9rem;
-            color: var(--gray-color);
-        }
-
-        .game-meta span {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .game-description {
-            color: var(--gray-color);
-            line-height: 1.6;
-            margin-bottom: 15px;
-        }
-
-        .game-tech {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-bottom: 15px;
-        }
-
-        .game-tech span {
-            padding: 5px 12px;
-            background: var(--light-color);
-            color: var(--primary-color);
-            border-radius: 15px;
-            font-size: 0.85rem;
-            font-weight: 500;
-        }
-
-        .game-links {
-            display: flex;
-            gap: 10px;
-        }
-
-        .game-link {
-            flex: 1;
-            padding: 10px;
-            text-align: center;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: var(--transition);
-        }
-
-        .game-link.primary {
-            background: var(--primary-color);
-            color: white;
-        }
-
-        .game-link.primary:hover {
-            background: #3a7bc8;
-        }
-
-        .game-link.secondary {
-            background: var(--light-color);
-            color: var(--primary-color);
-        }
-
-        .game-link.secondary:hover {
-            background: var(--dark-color);
-            color: white;
-        }
-
-        /* Modal styles */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.9);
-            z-index: 2000;
-            overflow-y: auto;
-        }
-
-        .modal.active {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .modal-content {
-            background: white;
-            max-width: 900px;
-            width: 100%;
-            border-radius: 15px;
-            overflow: hidden;
-            position: relative;
-            animation: modalSlideIn 0.3s ease;
-        }
-
-        @keyframes modalSlideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .modal-close {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            width: 40px;
-            height: 40px;
-            background: white;
-            border: none;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 1.5rem;
-            z-index: 10;
-            transition: var(--transition);
-        }
-
-        .modal-close:hover {
-            background: var(--secondary-color);
-            color: white;
-            transform: rotate(90deg);
-        }
-
-        .modal-image {
-            width: 100%;
-            height: 400px;
-            object-fit: cover;
-        }
-
-        .modal-body {
-            padding: 40px;
-        }
-
-        .modal-body h2 {
-            font-size: 2.2rem;
-            margin-bottom: 20px;
-            color: var(--dark-color);
-        }
-
-        .modal-screenshots {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-top: 30px;
-        }
-
-        .modal-screenshots img {
-            width: 100%;
-            height: 150px;
-            object-fit: cover;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .modal-screenshots img:hover {
-            transform: scale(1.05);
-        }
-
-        @media (max-width: 768px) {
-            .portfolio-hero h1 {
-                font-size: 2rem;
-            }
-
-            .portfolio-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .modal-body {
-                padding: 20px;
-            }
-
-            .modal-body h2 {
-                font-size: 1.6rem;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="portfolio.css">
 </head>
 <body>
     <!-- Navigation Bar -->
@@ -362,7 +49,7 @@
             <!-- Game Grid -->
             <div class="portfolio-grid">
                 <!-- Triaxium - 3D Puzzle Game -->
-                <div class="game-card" data-category="unreal">
+                <div class="game-card" data-category="unreal" data-screenshots='["./Images/triaxium1.png", "./Images/triaxium2.png", "./Images/triaxium3.png"]'>
                     <div class="game-image">
                         <img src="./Images/triaxium0.png" alt="Triaxium">
                         <span class="game-badge">Unreal Engine</span>
@@ -386,7 +73,7 @@
                 </div>
 
                 <!-- Dice Shard - 2D Turn-based Roguelike -->
-                <div class="game-card" data-category="unity">
+                <div class="game-card" data-category="unity" data-screenshots='[]'>
                     <div class="game-image">
                         <img src="./Images/diceshard_cover.webp" alt="Dice Shard">
                         <span class="game-badge">Unity</span>
@@ -414,7 +101,7 @@
                 </div>
 
                 <!-- Flappy Toucan - Game Jam Project -->
-                <div class="game-card" data-category="unity">
+                <div class="game-card" data-category="unity" data-screenshots='["./Images/flappytoucan0.png", "./Images/flappytoucan1.png"]'>
                     <div class="game-image">
                         <img src="./Images/flappytoucan_cover.png" alt="Flappy Toucan">
                         <span class="game-badge">Unity</span>
@@ -440,7 +127,7 @@
                 </div>
 
                 <!-- A Very Good Joust -->
-                <div class="game-card" data-category="Java">
+                <div class="game-card" data-category="Java" data-screenshots='["./Images/joust0.png", "./Images/joust1.png", "./Images/joust2.png"]'>
                     <div class="game-image">
                         <img src="./Images/joust_cover.png" alt="A Very Good Joust">
                         <span class="game-badge">Java</span>

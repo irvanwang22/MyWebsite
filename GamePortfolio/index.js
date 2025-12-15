@@ -55,7 +55,7 @@ gameCards.forEach(card => {
         
         // Fill modal content
         document.getElementById('modalTitle').textContent = title;
-        document.getElementById('modalDescription').textContent = description + ' ' + description;
+        document.getElementById('modalDescription').textContent = description;
         document.getElementById('modalYear').textContent = year;
         document.getElementById('modalGenre').textContent = genre;
         document.getElementById('modalEngine').textContent = badge;
@@ -69,6 +69,37 @@ gameCards.forEach(card => {
             span.textContent = tech.textContent;
             techContainer.appendChild(span);
         });
+        
+        // Fill screenshots dynamically
+        const screenshotsContainer = document.querySelector('.modal-screenshots');
+        screenshotsContainer.innerHTML = '';
+        const screenshots = JSON.parse(card.dataset.screenshots || '[]');
+        
+        if (screenshots.length > 0) {
+            screenshots.forEach((screenshotPath, index) => {
+                const img = document.createElement('img');
+                img.src = screenshotPath;
+                img.alt = `${title} Screenshot ${index + 1}`;
+                img.style.cursor = 'pointer';
+                img.onerror = function() {
+                    // Fallback to placeholder if image not found
+                    this.src = `https://via.placeholder.com/200x150/667eea/ffffff?text=Screenshot+${index + 1}`;
+                };
+                // Add click event to view full image
+                img.addEventListener('click', () => {
+                    openImageViewer(screenshotPath, `${title} Screenshot ${index + 1}`);
+                });
+                screenshotsContainer.appendChild(img);
+            });
+        } else {
+            // Show default placeholder if no screenshots
+            for (let i = 1; i <= 3; i++) {
+                const img = document.createElement('img');
+                img.src = `https://via.placeholder.com/200x150/667eea/ffffff?text=Screenshot+${i}`;
+                img.alt = `Screenshot ${i}`;
+                screenshotsContainer.appendChild(img);
+            }
+        }
         
         modal.classList.add('active');
         document.body.style.overflow = 'hidden';
@@ -93,6 +124,121 @@ function closeModal() {
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && modal.classList.contains('active')) {
         closeModal();
+    }
+});
+
+// Image viewer for full-screen screenshots
+function createImageViewer() {
+    const viewer = document.createElement('div');
+    viewer.id = 'imageViewer';
+    viewer.style.cssText = `
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.95);
+        z-index: 3000;
+        justify-content: center;
+        align-items: center;
+        cursor: zoom-out;
+    `;
+    
+    const img = document.createElement('img');
+    img.id = 'viewerImage';
+    img.style.cssText = `
+        max-width: 90%;
+        max-height: 90%;
+        object-fit: contain;
+        box-shadow: 0 10px 50px rgba(0, 0, 0, 0.5);
+        border-radius: 8px;
+    `;
+    
+    const closeBtn = document.createElement('button');
+    closeBtn.innerHTML = '&times;';
+    closeBtn.style.cssText = `
+        position: absolute;
+        top: 20px;
+        right: 30px;
+        width: 50px;
+        height: 50px;
+        background: white;
+        border: none;
+        border-radius: 50%;
+        font-size: 2rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    `;
+    
+    closeBtn.addEventListener('mouseenter', () => {
+        closeBtn.style.background = '#f44336';
+        closeBtn.style.color = 'white';
+        closeBtn.style.transform = 'rotate(90deg)';
+    });
+    
+    closeBtn.addEventListener('mouseleave', () => {
+        closeBtn.style.background = 'white';
+        closeBtn.style.color = 'black';
+        closeBtn.style.transform = 'rotate(0deg)';
+    });
+    
+    closeBtn.addEventListener('click', closeImageViewer);
+    viewer.addEventListener('click', (e) => {
+        if (e.target === viewer) {
+            closeImageViewer();
+        }
+    });
+    
+    viewer.appendChild(img);
+    viewer.appendChild(closeBtn);
+    document.body.appendChild(viewer);
+    
+    return viewer;
+}
+
+function openImageViewer(imageSrc, altText) {
+    let viewer = document.getElementById('imageViewer');
+    if (!viewer) {
+        viewer = createImageViewer();
+    }
+    
+    const img = document.getElementById('viewerImage');
+    img.src = imageSrc;
+    img.alt = altText;
+    
+    viewer.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    
+    // Animate image entrance
+    img.style.opacity = '0';
+    img.style.transform = 'scale(0.8)';
+    setTimeout(() => {
+        img.style.transition = 'all 0.3s ease';
+        img.style.opacity = '1';
+        img.style.transform = 'scale(1)';
+    }, 10);
+}
+
+function closeImageViewer() {
+    const viewer = document.getElementById('imageViewer');
+    if (viewer) {
+        const img = document.getElementById('viewerImage');
+        img.style.opacity = '0';
+        img.style.transform = 'scale(0.8)';
+        setTimeout(() => {
+            viewer.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }, 300);
+    }
+}
+
+// Close image viewer with ESC key
+document.addEventListener('keydown', (e) => {
+    const viewer = document.getElementById('imageViewer');
+    if (e.key === 'Escape' && viewer && viewer.style.display === 'flex') {
+        closeImageViewer();
     }
 });
 
